@@ -59,7 +59,7 @@ const DadosRadioativosTab = ({ theme, corPrincipal, setCorPrincipal }) => {
       <div className="space-y-4">
         <h3 className="text-xl font-bold text-slate-800">Análise Gráfica e Meia-Vida</h3>
         <p className="leading-relaxed text-justify">
-          Com os resultados anotados após cada lançamento, o estudante constrói um gráfico relacionando o número de rodadas com os dados restantes para encontrar a meia-vida do conjunto[cite: 2]. Por fim, é possível comparar a curva de decaimento experimental com a equação teórica — como $N(t)=35e^{-0,182t}$ para um conjunto inicial de 35 dados — permitindo avaliar a precisão matemática do experimento[cite: 1, 2].
+          Com os resultados anotados após cada lançamento, o estudante constrói um gráfico relacionando o número de rodadas com os dados restantes para encontrar a meia-vida do conjunto. Por fim, é possível comparar a curva de decaimento experimental com a equação teórica — como {"$N(t)=35e^{-0,182t}$"} para um conjunto inicial de 35 dados — permitindo avaliar a precisão matemática do experimento.
         </p>
       </div>
 
