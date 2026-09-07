@@ -1,4 +1,4 @@
-import ColorTester from '../components/common/ColorTester';
+import ColorTester from "../../components/common/ColorTester";
 
 export default function EmDesenvolvimentoTab({ theme, nomeMaterial }) {
   return (
