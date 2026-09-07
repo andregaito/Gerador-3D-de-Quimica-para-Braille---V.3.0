@@ -21,6 +21,7 @@ import SaibaMaisTab from './tabs/SaibaMaisTab';
 import ParceriasTab from './tabs/ParceriasTab';
 import EquipeTab from './tabs/EquipeTab';
 import BugTab from './tabs/BugTab';
+import EmDesenvolvimentoTab from './tabs/EmDesenvolvimentoTab';
 
 // ============================================================================
 // APP.JSX — Orquestrador principal do site
