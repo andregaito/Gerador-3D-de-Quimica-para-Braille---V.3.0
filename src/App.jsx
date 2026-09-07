@@ -66,39 +66,53 @@ export default function App() {
   };
   // =================================================
 
-  const renderConteudoAba = () => {
+const renderConteudoAba = () => {
     switch (activeTab) {
       case 'gerador':
-        return ( <GeradorBrailleTab theme={theme}  corPrincipal={corPrincipal}  setCorPrincipal={setCorPrincipal} autoRotate={autoRotate} setAutoRotate={setAutoRotate} gerador={gerador} />
-        );
+        return ( <GeradorBrailleTab theme={theme} corPrincipal={corPrincipal} setCorPrincipal={setCorPrincipal} autoRotate={autoRotate} setAutoRotate={setAutoRotate} gerador={gerador} /> );
         
       case 'ionicos':
-        return ( <BlocosIonicosTab theme={theme} corPrincipal={corPrincipal} setCorPrincipal={setCorPrincipal} autoRotate={autoRotate} setAutoRotate={setAutoRotate} ionico={ionico} />
-        );
+        return ( <BlocosIonicosTab theme={theme} corPrincipal={corPrincipal} setCorPrincipal={setCorPrincipal} autoRotate={autoRotate} setAutoRotate={setAutoRotate} ionico={ionico} /> );
+
+      // === SUB-ABAS DE MATERIAIS DIDÁTICOS ===
+      case 'dados-radioativos':
+        return <EmDesenvolvimentoTab theme={theme} nomeMaterial="Dados Radioativos" />;
+        
+      case 'giroscopios':
+        return <EmDesenvolvimentoTab theme={theme} nomeMaterial="Giroscópios Atômicos" />;
+        
+      case 'dados-ionicos':
+        return <EmDesenvolvimentoTab theme={theme} nomeMaterial="Dados Iônicos" />;
+        
+      case 'reguas':
+        return <EmDesenvolvimentoTab theme={theme} nomeMaterial="Réguas Químicas" />;
+        
+      case 'geometria':
+        return <EmDesenvolvimentoTab theme={theme} nomeMaterial="Kit Geometria Molecular" />;
+        
+      case 'carimbos':
+        return <EmDesenvolvimentoTab theme={theme} nomeMaterial="Carimbos Atômicos" />;
+        
+      case 'spinner':
+        return <EmDesenvolvimentoTab theme={theme} nomeMaterial="Spinner Elementar" />;
         
       case 'sobre':
-        return ( <SobreProjetoTab  theme={theme} corPrincipal={corPrincipal} setCorPrincipal={setCorPrincipal} />
-        );
+        return ( <SobreProjetoTab theme={theme} corPrincipal={corPrincipal} setCorPrincipal={setCorPrincipal} /> );
         
       case 'instrucoes':
-        return ( <InstrucoesTab  theme={theme} corPrincipal={corPrincipal} setCorPrincipal={setCorPrincipal} />
-        );
+        return ( <InstrucoesTab theme={theme} corPrincipal={corPrincipal} setCorPrincipal={setCorPrincipal} /> );
         
       case 'saiba-mais':
-        return ( <SaibaMaisTab theme={theme} corPrincipal={corPrincipal} setCorPrincipal={setCorPrincipal} />
-        );
+        return ( <SaibaMaisTab theme={theme} corPrincipal={corPrincipal} setCorPrincipal={setCorPrincipal} /> );
         
       case 'parcerias':
-        return ( <ParceriasTab theme={theme} corPrincipal={corPrincipal} setCorPrincipal={setCorPrincipal} />
-        );
+        return ( <ParceriasTab theme={theme} corPrincipal={corPrincipal} setCorPrincipal={setCorPrincipal} /> );
         
       case 'equipe':
-        return ( <EquipeTab theme={theme} corPrincipal={corPrincipal} setCorPrincipal={setCorPrincipal} />
-        );
+        return ( <EquipeTab theme={theme} corPrincipal={corPrincipal} setCorPrincipal={setCorPrincipal} /> );
         
       case 'bug':
-        return ( <BugTab theme={theme} corPrincipal={corPrincipal} setCorPrincipal={setCorPrincipal} />
-        );
+        return ( <BugTab theme={theme} corPrincipal={corPrincipal} setCorPrincipal={setCorPrincipal} /> );
         
       default:
         return null;
@@ -118,7 +132,7 @@ export default function App() {
 
       <Footer theme={theme} />
       
-      {/* === COMPONENTE ANALYTICS INJETADO AQUI === */}
+      {/* === ADIÇÃO DO COMPONENTE ANALYTICS DO VERCEL === */}
       <Analytics />
     </div>
   );
