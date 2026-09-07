@@ -13,6 +13,7 @@ import Header from './components/layout/Header';
 import Navigation from './components/layout/Navigation';
 import Footer from './components/layout/Footer';
 
+// === IMPORTAÇÕES DAS ABAS CENTRAIS ===
 import GeradorBrailleTab from './tabs/GeradorBrailleTab';
 import BlocosIonicosTab from './tabs/BlocosIonicosTab';
 import SobreProjetoTab from './tabs/SobreProjetoTab';
@@ -21,15 +22,26 @@ import SaibaMaisTab from './tabs/SaibaMaisTab';
 import ParceriasTab from './tabs/ParceriasTab';
 import EquipeTab from './tabs/EquipeTab';
 import BugTab from './tabs/BugTab';
-import EmDesenvolvimentoTab from './tabs/EmDesenvolvimentoTab';
+
+// === IMPORTAÇÕES DAS SUB ABS DE MATERIAIS DIDÁTICOS ===
+import DadosRadioativosTab from './tabs/Materiais Didaticos/DadosRadioativosTab';
+import GiroscopiosTab from './tabs/Materiais Didaticos/GiroscopiosTab';
+import DadosIonicosTab from './tabs/Materiais Didaticos/DadosIonicosTab';
+import ReguasQuimicasTab from './tabs/Materiais Didaticos/ReguasQuimicasTab';
+import GeometriaMolecularTab from './tabs/Materiais Didaticos/GeometriaMolecularTab';
+import CarimbosAtomicosTab from './tabs/Materiais Didaticos/CarimbosAtomicosTab';
+import SpinnerElementarTab from './tabs/Materiais Didaticos/SpinnerElementarTab';
+
+
+
+
 
 // ============================================================================
 // APP.JSX — Orquestrador principal do site
 //
-// Este arquivo NAO contem a logica nem o layout de cada aba: ele apenas
-// gerencia qual aba esta ativa, o tema de cores (compartilhado por todas as
-// abas) e delega o conteudo para o componente correspondente em `src/tabs/`.
-//
+// Este arquivo NAO contem a logica nem o layout de cada aba: ele apenas 
+//gerencia qual aba esta ativa, o tema de cores (compartilhado por todas as abas)
+// e delega o conteudo para o componente correspondente em `src/tabs/`.
 // Para mexer em uma aba especifica, edite o arquivo dela em `src/tabs/`:
 //   Gerador Braille  -> src/tabs/GeradorBrailleTab.jsx  (+ src/hooks/useBrailleGerador.js)
 //   Blocos Ionicos   -> src/tabs/BlocosIonicosTab.jsx   (+ src/hooks/useBlocoIonico.js)
