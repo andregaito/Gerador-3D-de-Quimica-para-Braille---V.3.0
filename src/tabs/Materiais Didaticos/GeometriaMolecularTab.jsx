@@ -1,5 +1,4 @@
-import ColorTester from '../components/common/ColorTester';
-
+import ColorTester from "../../components/common/ColorTester";
 export default function EmDesenvolvimentoTab({ theme, nomeMaterial }) {
   return (
     <div className="p-12 rounded-xl shadow-sm transition-colors duration-500 text-center fade-in" style={{ backgroundColor: theme.fundoCaixa, border: `2px solid ${theme.bordaGeral}` }}>
