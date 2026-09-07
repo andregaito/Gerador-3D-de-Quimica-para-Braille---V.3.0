@@ -6,9 +6,9 @@ const DadosRadioativosTab = ({ theme, corPrincipal, setCorPrincipal }) => {
   const [quantidadeInicial, setQuantidadeInicial] = useState(35);
 
   const [dadosExperimentais, setDadosExperimentais] = useState(
-    Array.from({ length: 22 }, (_, i) => ({
+    Array.from({ length: 30 }, (_, i) => ({
       rodada: i,
-      experimental: i === 0 ? 35 : '', 
+      experimental: i === 0 ? 42 : '', 
     }))
   );
 
@@ -28,13 +28,48 @@ const DadosRadioativosTab = ({ theme, corPrincipal, setCorPrincipal }) => {
     }
   };
 
-  // Calcula a curva teórica em tempo real baseada na quantidade inicial definida
-  const dadosGrafico = dadosExperimentais.map((linha) => ({
-    ...linha,
-    teorico: Number((quantidadeInicial * Math.exp(-0.182 * linha.rodada)).toFixed(2))
-  }));
+  // Lógica de paridade de cores complementares baseada na cor principal atual
+  const obterCorComplementar = (cor) => {
+    if (!cor) return '#10b981';
+    const c = String(cor).toLowerCase();
+    
+    // Paleta Roxa -> Retorna Verde
+    if (c.includes('purple') || c.includes('8b5cf6') || c.includes('a855f7') || c.includes('9333ea')) return '#22c55e';
+    // Paleta Verde -> Retorna Roxo
+    if (c.includes('green') || c.includes('22c55e') || c.includes('16a34a') || c.includes('15803d')) return '#8b5cf6';
+    
+    // Paleta Azul -> Retorna Vermelho
+    if (c.includes('blue') || c.includes('3b82f6') || c.includes('2563eb') || c.includes('1d4ed8')) return '#ef4444';
+    // Paleta Vermelha -> Retorna Azul
+    if (c.includes('red') || c.includes('ef4444') || c.includes('dc2626') || c.includes('b91c1c')) return '#3b82f6';
+    
+    return '#f59e0b'; // Fallback genérico
+  };
 
-  // Define um teto dinâmico para o gráfico não cortar a curva
+  const corComplementar = obterCorComplementar(corPrincipal);
+
+  // Calcula curvas teóricas e de dados decaídos
+  const dadosGrafico = dadosExperimentais.map((linha) => {
+    const teorico = Number((quantidadeInicial * Math.exp(-0.182 * linha.rodada)).toFixed(2));
+    return {
+      ...linha,
+      teorico,
+      teoricoDecaido: Number((quantidadeInicial - teorico).toFixed(2)),
+      experimentalDecaido: linha.experimental !== '' ? quantidadeInicial - linha.experimental : null
+    };
+  });
+
+  // Filtra o array para exibir o gráfico apenas até a última rodada com dados preenchidos
+  let ultimaRodadaPreenchida = 0;
+  for (let i = dadosGrafico.length - 1; i >= 0; i--) {
+    if (dadosGrafico[i].experimental !== '') {
+      ultimaRodadaPreenchida = i;
+      break;
+    }
+  }
+  const dadosFiltradosGrafico = dadosGrafico.slice(0, ultimaRodadaPreenchida + 1);
+
+  // Define um teto dinâmico para o gráfico
   const limiteYAxis = Math.ceil(quantidadeInicial * 1.15);
 
   return (
@@ -93,21 +128,24 @@ const DadosRadioativosTab = ({ theme, corPrincipal, setCorPrincipal }) => {
         
         <div className="flex flex-col lg:flex-row gap-8 items-start">
           
-          <div className="w-full lg:w-2/3 h-[400px] bg-white p-4 rounded-lg shadow-inner border border-slate-200">
+          <div className="w-full lg:w-2/3 h-[450px] bg-white p-4 rounded-lg shadow-inner border border-slate-200">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={dadosGrafico} margin={{ top: 20, right: 30, left: 0, bottom: 20 }}>
+              {/* O gráfico agora recebe apenas o array filtrado dinamicamente */}
+              <LineChart data={dadosFiltradosGrafico} margin={{ top: 20, right: 30, left: 0, bottom: 20 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
                 <XAxis dataKey="rodada" label={{ value: 'Nº de Rodadas', position: 'insideBottom', offset: -10 }} />
-                <YAxis label={{ value: 'Quant. Dados', angle: -90, position: 'insideLeft' }} domain={[0, limiteYAxis]} />
+                <YAxis label={{ value: 'Quantidade de Dados', angle: -90, position: 'insideLeft' }} domain={[0, limiteYAxis]} />
                 <Tooltip 
                   contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
                   labelFormatter={(label) => `Rodada: ${label}`}
                   formatter={(value, name) => [String(value).replace('.', ','), name]}
                 />
-                <Legend verticalAlign="top" height={36}/>
+                <Legend verticalAlign="top" wrapperStyle={{ paddingBottom: '20px' }} />
+                
+                {/* Linhas de Dados Restantes (Meia vida Radioativa) */}
                 <Line 
                   type="monotone" 
-                  name="Curva Teórica" 
+                  name="Curva Teórica (Restantes)" 
                   dataKey="teorico" 
                   stroke="#94a3b8" 
                   strokeWidth={2} 
@@ -117,9 +155,30 @@ const DadosRadioativosTab = ({ theme, corPrincipal, setCorPrincipal }) => {
                 />
                 <Line 
                   type="monotone" 
-                  name="Dados Experimentais" 
+                  name="Dados Exp. (Restantes)" 
                   dataKey="experimental" 
                   stroke={corPrincipal} 
+                  strokeWidth={3} 
+                  activeDot={{ r: 6 }} 
+                  connectNulls 
+                />
+
+                {/* Linhas de Dados Decaídos (Decaimento Radioativo) */}
+                <Line 
+                  type="monotone" 
+                  name="Curva Teórica (Decaídos)" 
+                  dataKey="teoricoDecaido" 
+                  stroke="#cbd5e1" 
+                  strokeWidth={2} 
+                  strokeDasharray="5 5" 
+                  dot={false} 
+                  isAnimationActive={false}
+                />
+                <Line 
+                  type="monotone" 
+                  name="Dados Exp. (Decaídos)" 
+                  dataKey="experimentalDecaido" 
+                  stroke={corComplementar} 
                   strokeWidth={3} 
                   activeDot={{ r: 6 }} 
                   connectNulls 
@@ -129,15 +188,16 @@ const DadosRadioativosTab = ({ theme, corPrincipal, setCorPrincipal }) => {
           </div>
 
           <div className="w-full lg:w-1/3 bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
-            <div className="max-h-[400px] overflow-y-auto">
+            <div className="max-h-[450px] overflow-y-auto">
               <table className="w-full text-sm text-left text-slate-600">
                 <thead className="text-xs text-white uppercase sticky top-0 z-10 shadow-sm" style={{ backgroundColor: corPrincipal }}>
                   <tr>
                     <th scope="col" className="px-4 py-3 text-center">Rodada</th>
-                    <th scope="col" className="px-4 py-3 text-center">Quant. Experimental</th>
+                    <th scope="col" className="px-4 py-3 text-center">Quant. Restante</th>
                   </tr>
                 </thead>
                 <tbody>
+                  {/* A tabela continua mapeando as rodadas fixas do estado original */}
                   {dadosGrafico.map((linha, index) => (
                     <tr key={linha.rodada} className="border-b border-slate-100 hover:bg-slate-50 transition-colors">
                       <td className="px-4 py-2 text-center font-semibold text-slate-700">
