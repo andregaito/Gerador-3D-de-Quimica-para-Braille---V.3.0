@@ -88,25 +88,25 @@ const renderConteudoAba = () => {
 
       // === SUB-ABAS DE MATERIAIS DIDÁTICOS ===
       case 'dados-radioativos':
-        return <EmDesenvolvimentoTab theme={theme} nomeMaterial="Dados Radioativos" />;
+        return <DadosRadioativosTab theme={theme} corPrincipal={corPrincipal} setCorPrincipal={setCorPrincipal} />;
         
       case 'giroscopios':
-        return <EmDesenvolvimentoTab theme={theme} nomeMaterial="Giroscópios Atômicos" />;
+        return <GiroscopiosTab theme={theme} corPrincipal={corPrincipal} setCorPrincipal={setCorPrincipal} />;
         
       case 'dados-ionicos':
-        return <EmDesenvolvimentoTab theme={theme} nomeMaterial="Dados Iônicos" />;
+        return <DadosIonicosTab theme={theme} corPrincipal={corPrincipal} setCorPrincipal={setCorPrincipal} />;
         
       case 'reguas':
-        return <EmDesenvolvimentoTab theme={theme} nomeMaterial="Réguas Químicas" />;
+        return <ReguasQuimicasTab theme={theme} corPrincipal={corPrincipal} setCorPrincipal={setCorPrincipal} />;
         
       case 'geometria':
-        return <EmDesenvolvimentoTab theme={theme} nomeMaterial="Kit Geometria Molecular" />;
+        return <GeometriaMolecularTab theme={theme} corPrincipal={corPrincipal} setCorPrincipal={setCorPrincipal} />;
         
       case 'carimbos':
-        return <EmDesenvolvimentoTab theme={theme} nomeMaterial="Carimbos Atômicos" />;
+        return <CarimbosAtomicosTab theme={theme} corPrincipal={corPrincipal} setCorPrincipal={setCorPrincipal} />;
         
       case 'spinner':
-        return <EmDesenvolvimentoTab theme={theme} nomeMaterial="Spinner Elementar" />;
+        return <SpinnerElementarTab theme={theme} corPrincipal={corPrincipal} setCorPrincipal={setCorPrincipal} />;
         
       case 'sobre':
         return ( <SobreProjetoTab theme={theme} corPrincipal={corPrincipal} setCorPrincipal={setCorPrincipal} /> );
