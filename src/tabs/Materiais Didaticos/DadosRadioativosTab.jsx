@@ -3,10 +3,9 @@ import ColorTester from '../../components/common/ColorTester';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 const DadosRadioativosTab = ({ theme, corPrincipal, setCorPrincipal }) => {
-  // Inicializa o estado resgatando do sessionStorage ou usando valores padrão
   const [quantidadeInicial, setQuantidadeInicial] = useState(() => {
     const salvo = sessionStorage.getItem('dados_rad_qtd_inicial');
-    return salvo !== null ? Number(salvo) : 42;
+    return salvo !== null ? Number(salvo) : 35;
   });
 
   const [facesRadioativas, setFacesRadioativas] = useState(() => {
@@ -23,13 +22,12 @@ const DadosRadioativosTab = ({ theme, corPrincipal, setCorPrincipal }) => {
         // Fallback caso haja erro de parsing
       }
     }
-    return Array.from({ length: 28 }, (_, i) => ({
+    return Array.from({ length: 22 }, (_, i) => ({
       rodada: i,
-      experimental: i === 0 ? 45 : '', 
+      experimental: i === 0 ? 35 : '', 
     }));
   });
 
-  // Salva automaticamente no sessionStorage sempre que houver alteração
   useEffect(() => {
     sessionStorage.setItem('dados_rad_qtd_inicial', quantidadeInicial);
   }, [quantidadeInicial]);
@@ -56,6 +54,38 @@ const DadosRadioativosTab = ({ theme, corPrincipal, setCorPrincipal }) => {
       novosDados[0].experimental = novoValor;
       setDadosExperimentais(novosDados);
     }
+  };
+
+  // Função para simular a rolagem de dados baseada nas faces radioativas selecionadas
+  const handleJogarDados = () => {
+    const indexVazio = dadosExperimentais.findIndex((d, idx) => idx > 0 && d.experimental === '');
+    if (indexVazio === -1) return; // Todas as rodadas preenchidas
+
+    const qtdAnterior = Number(dadosExperimentais[indexVazio - 1].experimental);
+    if (isNaN(qtdAnterior) || qtdAnterior <= 0) return;
+
+    const p = facesRadioativas / 6;
+    let restantes = 0;
+    
+    // Simula cada dado restante rolando individualmente
+    for (let i = 0; i < qtdAnterior; i++) {
+      if (Math.random() >= p) {
+        restantes++; // Sobreviveu (não caiu na face radioativa)
+      }
+    }
+
+    const novosDados = [...dadosExperimentais];
+    novosDados[indexVazio].experimental = restantes;
+    setDadosExperimentais(novosDados);
+  };
+
+  // Função para reiniciar a simulação experimental
+  const handleReiniciarSimulacao = () => {
+    const novosDados = Array.from({ length: 22 }, (_, i) => ({
+      rodada: i,
+      experimental: i === 0 ? quantidadeInicial : '',
+    }));
+    setDadosExperimentais(novosDados);
   };
 
   const obterCorComplementar = (cor) => {
@@ -98,6 +128,9 @@ const DadosRadioativosTab = ({ theme, corPrincipal, setCorPrincipal }) => {
   const limiteYAxis = Math.ceil(quantidadeInicial * 1.15);
   const lambdaFormatado = lambda.toFixed(3).replace('.', ',');
 
+  const proximoIndiceVazio = dadosExperimentais.findIndex((d, idx) => idx > 0 && d.experimental === '');
+  const simulacaoConcluída = proximoIndiceVazio === -1 || (ultimaRodadaPreenchida > 0 && dadosGrafico[ultimaRodadaPreenchida].experimental === 0);
+
   return (
     <div id="painel-dados-radioativos" role="tabpanel" aria-label="Dados Radioativos" className="relative p-8 sm:p-12 rounded-xl shadow-sm transition-colors duration-500 text-slate-700 fade-in space-y-8 text-left" style={{ backgroundColor: theme.fundoCaixa, border: `2px solid ${theme.bordaGeral}` }}>
       
@@ -123,7 +156,7 @@ const DadosRadioativosTab = ({ theme, corPrincipal, setCorPrincipal }) => {
       <div className="space-y-4">
         <h3 className="text-xl font-bold text-slate-800">Mecânica do Jogo</h3>
         <p className="leading-relaxed text-justify">
-          Para iniciar, o aluno deve jogar todos os seus dados disponíveis sobre uma superfície plana e observar o resultado. Todo dado que exibir o símbolo radioativo virado para cima representa um núcleo que sofreu decaimento e, portanto, deve ser retirado do montante principal. Após retirar esses dados, anota-se o novo valor total de dados restantes na tabela experimental, repetindo as rodadas de lançamentos até que todos os dados decaiam a zero.
+          Para iniciar, o aluno pode utilizar dados físicos ou clicar no botão <strong>Jogar Dados</strong> para simular os lançamentos digitalmente. Todo dado que exibir o símbolo radioativo virado para cima representa um núcleo que sofreu decaimento e deve ser retirado. O processo é repetido a cada rodada até que todos os dados decaiam a zero.
         </p>
       </div>
       
@@ -136,9 +169,10 @@ const DadosRadioativosTab = ({ theme, corPrincipal, setCorPrincipal }) => {
 
       <div className="pt-6 border-t border-slate-200">
         
-        <div className="flex flex-col sm:flex-row items-center justify-between mb-8 bg-slate-50 p-5 rounded-lg border border-slate-200 shadow-sm">
+        {/* Controles da Simulação e Botão Jogar Dados */}
+        <div className="flex flex-col lg:flex-row items-center justify-between mb-8 bg-slate-50 p-5 rounded-lg border border-slate-200 shadow-sm gap-6">
           <h3 className="text-2xl font-bold text-slate-800">Configurações da Simulação</h3>
-          <div className="flex flex-wrap items-center gap-6 mt-4 sm:mt-0">
+          <div className="flex flex-wrap items-center gap-4">
             <div className="flex items-center gap-3">
               <label htmlFor="input-faces" className="font-semibold text-slate-700">Faces Radioativas:</label>
               <select
@@ -164,6 +198,29 @@ const DadosRadioativosTab = ({ theme, corPrincipal, setCorPrincipal }) => {
                 className="w-20 text-center border border-slate-300 rounded-md py-1.5 px-2 focus:outline-none focus:ring-2 transition-all font-bold"
                 style={{ focusRingColor: corPrincipal }}
               />
+            </div>
+
+            <div className="flex items-center gap-2">
+              <button
+                onClick={handleJogarDados}
+                disabled={simulacaoConcluída}
+                className={`flex items-center gap-2 px-4 py-2 rounded-md font-bold text-white shadow-sm transition-all ${simulacaoConcluída ? 'opacity-50 cursor-not-allowed bg-slate-400' : 'hover:opacity-90 active:scale-95'}`}
+                style={{ backgroundColor: simulacaoConcluída ? undefined : corPrincipal }}
+                title="Simular a próxima rodada de lançamento de dados"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                </svg>
+                Jogar Dados
+              </button>
+
+              <button
+                onClick={handleReiniciarSimulacao}
+                className="px-3 py-2 rounded-md font-semibold text-slate-600 bg-white border border-slate-300 hover:bg-slate-100 transition-all text-sm"
+                title="Reiniciar todos os dados da tabela"
+              >
+                Reiniciar
+              </button>
             </div>
           </div>
         </div>
@@ -288,7 +345,7 @@ const DadosRadioativosTab = ({ theme, corPrincipal, setCorPrincipal }) => {
               </table>
             </div>
             <div className="p-3 bg-slate-50 text-xs text-slate-500 text-center border-t border-slate-200">
-              Digite seus resultados experimentais para atualizar o gráfico interativo.
+              Clique em <strong>Jogar Dados</strong> para simular rodadas ou digite manualmente.
             </div>
           </div>
 
