@@ -3,13 +3,13 @@ import ColorTester from '../../components/common/ColorTester';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 const DadosRadioativosTab = ({ theme, corPrincipal, setCorPrincipal }) => {
-  const [quantidadeInicial, setQuantidadeInicial] = useState(42);
+  const [quantidadeInicial, setQuantidadeInicial] = useState(45);
   const [facesRadioativas, setFacesRadioativas] = useState(1);
 
   const [dadosExperimentais, setDadosExperimentais] = useState(
-    Array.from({ length: 25 }, (_, i) => ({
+    Array.from({ length: 28 }, (_, i) => ({
       rodada: i,
-      experimental: i === 0 ? 42 : '', 
+      experimental: i === 0 ? 45 : '', 
     }))
   );
 
@@ -43,19 +43,16 @@ const DadosRadioativosTab = ({ theme, corPrincipal, setCorPrincipal }) => {
 
   const corComplementar = obterCorComplementar(corPrincipal);
 
-  // Cálculos matemáticos baseados nas faces ativas escolhidas
   const p = facesRadioativas / 6;
   const fracaoRestante = (6 - facesRadioativas) / 6;
   const lambda = facesRadioativas === 0 ? 0 : -Math.log(fracaoRestante);
   const meiaVida = facesRadioativas === 0 ? 'Infinita' : (Math.LN2 / lambda).toFixed(1);
 
-  // Cálculo das curvas teóricas atualizado com o lambda dinâmico
   const dadosGrafico = dadosExperimentais.map((linha) => {
     const teorico = Number((quantidadeInicial * Math.exp(-lambda * linha.rodada)).toFixed(2));
     return {
       ...linha,
       teorico,
-      teoricoDecaido: Number((quantidadeInicial - teorico).toFixed(2)),
       experimentalDecaido: linha.experimental !== '' ? quantidadeInicial - linha.experimental : null
     };
   });
@@ -70,6 +67,7 @@ const DadosRadioativosTab = ({ theme, corPrincipal, setCorPrincipal }) => {
   const dadosFiltradosGrafico = dadosGrafico.slice(0, ultimaRodadaPreenchida + 1);
 
   const limiteYAxis = Math.ceil(quantidadeInicial * 1.15);
+  const lambdaFormatado = lambda.toFixed(3).replace('.', ',');
 
   return (
     <div id="painel-dados-radioativos" role="tabpanel" aria-label="Dados Radioativos" className="relative p-8 sm:p-12 rounded-xl shadow-sm transition-colors duration-500 text-slate-700 fade-in space-y-8 text-left" style={{ backgroundColor: theme.fundoCaixa, border: `2px solid ${theme.bordaGeral}` }}>
@@ -103,13 +101,12 @@ const DadosRadioativosTab = ({ theme, corPrincipal, setCorPrincipal }) => {
       <div className="space-y-4 mb-8">
         <h3 className="text-xl font-bold text-slate-800">Análise Gráfica e Meia-Vida</h3>
         <p className="leading-relaxed text-justify">
-          Com os resultados anotados após cada lançamento, o estudante constrói um gráfico relacionando o número de rodadas com os dados restantes para encontrar a meia-vida do conjunto. Por fim, é possível comparar a curva de decaimento experimental com a equação teórica — como {"N(t) = " + quantidadeInicial + "e^{-" + lambda.toFixed(3).replace('.', ',') + "t}"} para o cenário escolhido — permitindo avaliar a precisão matemática do experimento.
+          Com os resultados anotados após cada lançamento, o estudante constrói um gráfico relacionando o número de rodadas com os dados restantes para encontrar a meia-vida do conjunto. Por fim, é possível comparar a curva de decaimento experimental com a equação teórica — como {"N(t) = " + quantidadeInicial + "e^{-" + lambdaFormatado + "t}"} para o cenário escolhido — permitindo avaliar a precisão matemática do experimento.
         </p>
       </div>
 
       <div className="pt-6 border-t border-slate-200">
         
-        {/* Controles da Simulação */}
         <div className="flex flex-col sm:flex-row items-center justify-between mb-8 bg-slate-50 p-5 rounded-lg border border-slate-200 shadow-sm">
           <h3 className="text-2xl font-bold text-slate-800">Configurações da Simulação</h3>
           <div className="flex flex-wrap items-center gap-6 mt-4 sm:mt-0">
@@ -142,11 +139,9 @@ const DadosRadioativosTab = ({ theme, corPrincipal, setCorPrincipal }) => {
           </div>
         </div>
         
-        {/* Layout Reorganizado: Coluna Esquerda (Cálculos + Gráfico) / Coluna Direita (Tabela Alta) */}
         <div className="flex flex-col lg:flex-row gap-8 items-start">
           
           <div className="w-full lg:w-3/5 xl:w-2/3 flex flex-col gap-8">
-            {/* Caixa de Explicações Matemáticas Dinâmica */}
             <div className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
               <div className="px-6 py-4 font-bold text-lg text-white" style={{ backgroundColor: corPrincipal }}>
                 Conjunto de Dados: {facesRadioativas} Face{facesRadioativas !== 1 ? 's' : ''} Radioativa{facesRadioativas !== 1 ? 's' : ''}
@@ -162,25 +157,32 @@ const DadosRadioativosTab = ({ theme, corPrincipal, setCorPrincipal }) => {
                 </div>
                 <div className="flex flex-col sm:flex-row justify-between px-6 py-4 hover:bg-slate-50 transition-colors">
                   <span className="font-semibold text-slate-700">Constante de Decaimento (λ)</span>
-                  <span className="font-bold text-slate-900 mt-1 sm:mt-0">λ = -ln({6 - facesRadioativas}/6) ≈ {lambda.toFixed(3).replace('.', ',')}</span>
+                  <span className="font-bold text-slate-900 mt-1 sm:mt-0">λ = -ln({6 - facesRadioativas}/6) ≈ {lambdaFormatado}</span>
                 </div>
                 <div className="flex flex-col sm:flex-row justify-between px-6 py-4 hover:bg-slate-50 transition-colors">
                   <span className="font-semibold text-slate-700">Meia Vida (t<sub>1/2</sub>)</span>
                   <span className="font-bold text-slate-900 mt-1 sm:mt-0">
-                    ln(2) / λ = {facesRadioativas === 0 ? 0 : 'ln(2) / ' + lambda.toFixed(3).replace('.', ',') + ' = '}
+                    ln(2) / λ = {facesRadioativas === 0 ? 0 : 'ln(2) / ' + lambdaFormatado + ' = '}
                     {meiaVida} {facesRadioativas !== 0 && 'rodadas'}
                   </span>
                 </div>
               </div>
             </div>
 
-            {/* Gráfico */}
             <div className="h-[450px] bg-white p-4 rounded-lg shadow-inner border border-slate-200">
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={dadosFiltradosGrafico} margin={{ top: 20, right: 30, left: 0, bottom: 20 }}>
+                <LineChart data={dadosFiltradosGrafico} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
                   <XAxis dataKey="rodada" label={{ value: 'Nº de Rodadas', position: 'insideBottom', offset: -10 }} />
-                  <YAxis label={{ value: 'Quantidade de Dados', angle: -90, position: 'insideLeft' }} domain={[0, limiteYAxis]} />
+                  <YAxis 
+                    label={{ 
+                      value: 'Quantidade de Dados', 
+                      angle: -90, 
+                      position: 'insideLeft', 
+                      style: { textAnchor: 'middle' } 
+                    }} 
+                    domain={[0, limiteYAxis]} 
+                  />
                   <Tooltip 
                     contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
                     labelFormatter={(label) => `Rodada: ${label}`}
@@ -190,7 +192,7 @@ const DadosRadioativosTab = ({ theme, corPrincipal, setCorPrincipal }) => {
                   
                   <Line 
                     type="monotone" 
-                    name="Curva Teórica (Restantes)" 
+                    name={`Eq. Teórica Meia Vida: N(t) = ${quantidadeInicial}e^{-${lambdaFormatado}t}`}
                     dataKey="teorico" 
                     stroke="#94a3b8" 
                     strokeWidth={2} 
@@ -200,27 +202,16 @@ const DadosRadioativosTab = ({ theme, corPrincipal, setCorPrincipal }) => {
                   />
                   <Line 
                     type="monotone" 
-                    name="Dados Exp. (Restantes)" 
+                    name="Quant. Dados" 
                     dataKey="experimental" 
                     stroke={corPrincipal} 
                     strokeWidth={3} 
                     activeDot={{ r: 6 }} 
                     connectNulls 
                   />
-
                   <Line 
                     type="monotone" 
-                    name="Curva Teórica (Decaídos)" 
-                    dataKey="teoricoDecaido" 
-                    stroke="#cbd5e1" 
-                    strokeWidth={2} 
-                    strokeDasharray="5 5" 
-                    dot={false} 
-                    isAnimationActive={false}
-                  />
-                  <Line 
-                    type="monotone" 
-                    name="Dados Exp. (Decaídos)" 
+                    name="Total de Decaimentos" 
                     dataKey="experimentalDecaido" 
                     stroke={corComplementar} 
                     strokeWidth={3} 
@@ -232,7 +223,6 @@ const DadosRadioativosTab = ({ theme, corPrincipal, setCorPrincipal }) => {
             </div>
           </div>
 
-          {/* Tabela Alta ao lado (Preenchendo a altura vertical combinada dos Cálculos e Gráfico) */}
           <div className="w-full lg:w-2/5 xl:w-1/3 bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden flex flex-col h-full">
             <div className="flex-1 max-h-[725px] overflow-y-auto">
               <table className="w-full text-sm text-left text-slate-600">
