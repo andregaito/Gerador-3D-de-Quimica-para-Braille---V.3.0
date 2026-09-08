@@ -1,17 +1,46 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ColorTester from '../../components/common/ColorTester';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 const DadosRadioativosTab = ({ theme, corPrincipal, setCorPrincipal }) => {
-  const [quantidadeInicial, setQuantidadeInicial] = useState(45);
-  const [facesRadioativas, setFacesRadioativas] = useState(1);
+  // Inicializa o estado resgatando do sessionStorage ou usando valores padrão
+  const [quantidadeInicial, setQuantidadeInicial] = useState(() => {
+    const salvo = sessionStorage.getItem('dados_rad_qtd_inicial');
+    return salvo !== null ? Number(salvo) : 42;
+  });
 
-  const [dadosExperimentais, setDadosExperimentais] = useState(
-    Array.from({ length: 28 }, (_, i) => ({
+  const [facesRadioativas, setFacesRadioativas] = useState(() => {
+    const salvo = sessionStorage.getItem('dados_rad_faces');
+    return salvo !== null ? Number(salvo) : 1;
+  });
+
+  const [dadosExperimentais, setDadosExperimentais] = useState(() => {
+    const salvo = sessionStorage.getItem('dados_rad_experimentais');
+    if (salvo) {
+      try {
+        return JSON.parse(salvo);
+      } catch (e) {
+        // Fallback caso haja erro de parsing
+      }
+    }
+    return Array.from({ length: 28 }, (_, i) => ({
       rodada: i,
       experimental: i === 0 ? 45 : '', 
-    }))
-  );
+    }));
+  });
+
+  // Salva automaticamente no sessionStorage sempre que houver alteração
+  useEffect(() => {
+    sessionStorage.setItem('dados_rad_qtd_inicial', quantidadeInicial);
+  }, [quantidadeInicial]);
+
+  useEffect(() => {
+    sessionStorage.setItem('dados_rad_faces', facesRadioativas);
+  }, [facesRadioativas]);
+
+  useEffect(() => {
+    sessionStorage.setItem('dados_rad_experimentais', JSON.stringify(dadosExperimentais));
+  }, [dadosExperimentais]);
 
   const handleInputChange = (index, value) => {
     const novosDados = [...dadosExperimentais];
