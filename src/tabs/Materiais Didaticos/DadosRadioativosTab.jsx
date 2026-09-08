@@ -3,10 +3,11 @@ import ColorTester from '../../components/common/ColorTester';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 const DadosRadioativosTab = ({ theme, corPrincipal, setCorPrincipal }) => {
-  const [quantidadeInicial, setQuantidadeInicial] = useState(35);
+  const [quantidadeInicial, setQuantidadeInicial] = useState(42);
+  const [facesRadioativas, setFacesRadioativas] = useState(1);
 
   const [dadosExperimentais, setDadosExperimentais] = useState(
-    Array.from({ length: 28 }, (_, i) => ({
+    Array.from({ length: 25 }, (_, i) => ({
       rodada: i,
       experimental: i === 0 ? 42 : '', 
     }))
@@ -42,8 +43,15 @@ const DadosRadioativosTab = ({ theme, corPrincipal, setCorPrincipal }) => {
 
   const corComplementar = obterCorComplementar(corPrincipal);
 
+  // Cálculos matemáticos baseados nas faces ativas escolhidas
+  const p = facesRadioativas / 6;
+  const fracaoRestante = (6 - facesRadioativas) / 6;
+  const lambda = facesRadioativas === 0 ? 0 : -Math.log(fracaoRestante);
+  const meiaVida = facesRadioativas === 0 ? 'Infinita' : (Math.LN2 / lambda).toFixed(1);
+
+  // Cálculo das curvas teóricas atualizado com o lambda dinâmico
   const dadosGrafico = dadosExperimentais.map((linha) => {
-    const teorico = Number((quantidadeInicial * Math.exp(-0.182 * linha.rodada)).toFixed(2));
+    const teorico = Number((quantidadeInicial * Math.exp(-lambda * linha.rodada)).toFixed(2));
     return {
       ...linha,
       teorico,
@@ -92,122 +100,146 @@ const DadosRadioativosTab = ({ theme, corPrincipal, setCorPrincipal }) => {
         </p>
       </div>
       
-      <div className="space-y-4">
+      <div className="space-y-4 mb-8">
         <h3 className="text-xl font-bold text-slate-800">Análise Gráfica e Meia-Vida</h3>
         <p className="leading-relaxed text-justify">
-          Com os resultados anotados após cada lançamento, o estudante constrói um gráfico relacionando o número de rodadas com os dados restantes para encontrar a meia-vida do conjunto. Por fim, é possível comparar a curva de decaimento experimental com a equação teórica — como {"N(t) = " + quantidadeInicial + "e^{-0,182t}"} para um conjunto inicial de {quantidadeInicial} dados — permitindo avaliar a precisão matemática do experimento.
+          Com os resultados anotados após cada lançamento, o estudante constrói um gráfico relacionando o número de rodadas com os dados restantes para encontrar a meia-vida do conjunto. Por fim, é possível comparar a curva de decaimento experimental com a equação teórica — como {"N(t) = " + quantidadeInicial + "e^{-" + lambda.toFixed(3).replace('.', ',') + "t}"} para o cenário escolhido — permitindo avaliar a precisão matemática do experimento.
         </p>
       </div>
 
-      {/* Caixa de Explicações Matemáticas (Novidade) */}
-      <div className="mt-8 bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
-        <div className="px-6 py-4 font-bold text-lg text-white" style={{ backgroundColor: corPrincipal }}>
-          Conjunto de Dados: 1 Face Radioativa
-        </div>
-        <div className="divide-y divide-slate-200 text-sm sm:text-base">
-          <div className="flex flex-col sm:flex-row justify-between px-6 py-4 hover:bg-slate-50 transition-colors">
-            <span className="font-semibold text-slate-700">Probabilidade de Decaimento (p)</span>
-            <span className="font-bold text-slate-900 mt-1 sm:mt-0">1/6 = 0,1666</span>
-          </div>
-          <div className="flex flex-col sm:flex-row justify-between px-6 py-4 hover:bg-slate-50 transition-colors">
-            <span className="font-semibold text-slate-700">Fração de Núcleos Restantes (1 - p)</span>
-            <span className="font-bold text-slate-900 mt-1 sm:mt-0">5/6 = 0,8333</span>
-          </div>
-          <div className="flex flex-col sm:flex-row justify-between px-6 py-4 hover:bg-slate-50 transition-colors">
-            <span className="font-semibold text-slate-700">Constante de Decaimento (λ)</span>
-            <span className="font-bold text-slate-900 mt-1 sm:mt-0">λ = -ln(5/6) ≈ 0,182</span>
-          </div>
-          <div className="flex flex-col sm:flex-row justify-between px-6 py-4 hover:bg-slate-50 transition-colors">
-            <span className="font-semibold text-slate-700">Meia Vida (t<sub>1/2</sub>)</span>
-            <span className="font-bold text-slate-900 mt-1 sm:mt-0">-ln(2) / λ = -ln(2) / 0,182 = 3,8 rodadas</span>
-          </div>
-        </div>
-      </div>
-
-      <div className="pt-6 mt-8 border-t border-slate-200">
+      <div className="pt-6 border-t border-slate-200">
         
-        <div className="flex flex-col sm:flex-row items-center justify-between mb-6 bg-slate-50 p-4 rounded-lg border border-slate-200">
-          <h3 className="text-2xl font-bold text-slate-800">Gráfico de Decaimento Interativo</h3>
-          <div className="flex items-center gap-3 mt-4 sm:mt-0">
-            <label htmlFor="input-qtd" className="font-semibold text-slate-700">Dados Iniciais (N):</label>
-            <input
-              id="input-qtd"
-              type="number"
-              min="1"
-              value={quantidadeInicial}
-              onChange={handleQuantidadeInicial}
-              className="w-20 text-center border border-slate-300 rounded-md py-1.5 px-2 focus:outline-none focus:ring-2 transition-all font-bold"
-              style={{ focusRingColor: corPrincipal }}
-            />
+        {/* Controles da Simulação */}
+        <div className="flex flex-col sm:flex-row items-center justify-between mb-8 bg-slate-50 p-5 rounded-lg border border-slate-200 shadow-sm">
+          <h3 className="text-2xl font-bold text-slate-800">Configurações da Simulação</h3>
+          <div className="flex flex-wrap items-center gap-6 mt-4 sm:mt-0">
+            <div className="flex items-center gap-3">
+              <label htmlFor="input-faces" className="font-semibold text-slate-700">Faces Radioativas:</label>
+              <select
+                id="input-faces"
+                value={facesRadioativas}
+                onChange={(e) => setFacesRadioativas(Number(e.target.value))}
+                className="w-20 text-center border border-slate-300 rounded-md py-1.5 px-2 focus:outline-none focus:ring-2 transition-all font-bold bg-white"
+                style={{ focusRingColor: corPrincipal }}
+              >
+                {[0, 1, 2, 3, 4, 5].map((val) => (
+                  <option key={val} value={val}>{val}/6</option>
+                ))}
+              </select>
+            </div>
+            <div className="flex items-center gap-3">
+              <label htmlFor="input-qtd" className="font-semibold text-slate-700">Dados Iniciais (N):</label>
+              <input
+                id="input-qtd"
+                type="number"
+                min="1"
+                value={quantidadeInicial}
+                onChange={handleQuantidadeInicial}
+                className="w-20 text-center border border-slate-300 rounded-md py-1.5 px-2 focus:outline-none focus:ring-2 transition-all font-bold"
+                style={{ focusRingColor: corPrincipal }}
+              />
+            </div>
           </div>
         </div>
         
+        {/* Layout Reorganizado: Coluna Esquerda (Cálculos + Gráfico) / Coluna Direita (Tabela Alta) */}
         <div className="flex flex-col lg:flex-row gap-8 items-start">
           
-          <div className="w-full lg:w-3/5 xl:w-2/3 h-[450px] bg-white p-4 rounded-lg shadow-inner border border-slate-200">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={dadosFiltradosGrafico} margin={{ top: 20, right: 30, left: 0, bottom: 20 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-                <XAxis dataKey="rodada" label={{ value: 'Nº de Rodadas', position: 'insideBottom', offset: -10 }} />
-                <YAxis label={{ value: 'Quantidade de Dados', angle: -90, position: 'insideLeft' }} domain={[0, limiteYAxis]} />
-                <Tooltip 
-                  contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
-                  labelFormatter={(label) => `Rodada: ${label}`}
-                  formatter={(value, name) => [String(value).replace('.', ','), name]}
-                />
-                <Legend verticalAlign="top" wrapperStyle={{ paddingBottom: '20px' }} />
-                
-                <Line 
-                  type="monotone" 
-                  name="Curva Teórica (Restantes)" 
-                  dataKey="teorico" 
-                  stroke="#94a3b8" 
-                  strokeWidth={2} 
-                  strokeDasharray="5 5" 
-                  dot={false} 
-                  isAnimationActive={false}
-                />
-                <Line 
-                  type="monotone" 
-                  name="Dados Exp. (Restantes)" 
-                  dataKey="experimental" 
-                  stroke={corPrincipal} 
-                  strokeWidth={3} 
-                  activeDot={{ r: 6 }} 
-                  connectNulls 
-                />
+          <div className="w-full lg:w-3/5 xl:w-2/3 flex flex-col gap-8">
+            {/* Caixa de Explicações Matemáticas Dinâmica */}
+            <div className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+              <div className="px-6 py-4 font-bold text-lg text-white" style={{ backgroundColor: corPrincipal }}>
+                Conjunto de Dados: {facesRadioativas} Face{facesRadioativas !== 1 ? 's' : ''} Radioativa{facesRadioativas !== 1 ? 's' : ''}
+              </div>
+              <div className="divide-y divide-slate-200 text-sm sm:text-base">
+                <div className="flex flex-col sm:flex-row justify-between px-6 py-4 hover:bg-slate-50 transition-colors">
+                  <span className="font-semibold text-slate-700">Probabilidade de Decaimento (p)</span>
+                  <span className="font-bold text-slate-900 mt-1 sm:mt-0">{facesRadioativas}/6 = {p.toFixed(4).replace('.', ',')}</span>
+                </div>
+                <div className="flex flex-col sm:flex-row justify-between px-6 py-4 hover:bg-slate-50 transition-colors">
+                  <span className="font-semibold text-slate-700">Fração de Núcleos Restantes (1 - p)</span>
+                  <span className="font-bold text-slate-900 mt-1 sm:mt-0">{6 - facesRadioativas}/6 = {fracaoRestante.toFixed(4).replace('.', ',')}</span>
+                </div>
+                <div className="flex flex-col sm:flex-row justify-between px-6 py-4 hover:bg-slate-50 transition-colors">
+                  <span className="font-semibold text-slate-700">Constante de Decaimento (λ)</span>
+                  <span className="font-bold text-slate-900 mt-1 sm:mt-0">λ = -ln({6 - facesRadioativas}/6) ≈ {lambda.toFixed(3).replace('.', ',')}</span>
+                </div>
+                <div className="flex flex-col sm:flex-row justify-between px-6 py-4 hover:bg-slate-50 transition-colors">
+                  <span className="font-semibold text-slate-700">Meia Vida (t<sub>1/2</sub>)</span>
+                  <span className="font-bold text-slate-900 mt-1 sm:mt-0">
+                    ln(2) / λ = {facesRadioativas === 0 ? 0 : 'ln(2) / ' + lambda.toFixed(3).replace('.', ',') + ' = '}
+                    {meiaVida} {facesRadioativas !== 0 && 'rodadas'}
+                  </span>
+                </div>
+              </div>
+            </div>
 
-                <Line 
-                  type="monotone" 
-                  name="Curva Teórica (Decaídos)" 
-                  dataKey="teoricoDecaido" 
-                  stroke="#cbd5e1" 
-                  strokeWidth={2} 
-                  strokeDasharray="5 5" 
-                  dot={false} 
-                  isAnimationActive={false}
-                />
-                <Line 
-                  type="monotone" 
-                  name="Dados Exp. (Decaídos)" 
-                  dataKey="experimentalDecaido" 
-                  stroke={corComplementar} 
-                  strokeWidth={3} 
-                  activeDot={{ r: 6 }} 
-                  connectNulls 
-                />
-              </LineChart>
-            </ResponsiveContainer>
+            {/* Gráfico */}
+            <div className="h-[450px] bg-white p-4 rounded-lg shadow-inner border border-slate-200">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={dadosFiltradosGrafico} margin={{ top: 20, right: 30, left: 0, bottom: 20 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                  <XAxis dataKey="rodada" label={{ value: 'Nº de Rodadas', position: 'insideBottom', offset: -10 }} />
+                  <YAxis label={{ value: 'Quantidade de Dados', angle: -90, position: 'insideLeft' }} domain={[0, limiteYAxis]} />
+                  <Tooltip 
+                    contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+                    labelFormatter={(label) => `Rodada: ${label}`}
+                    formatter={(value, name) => [String(value).replace('.', ','), name]}
+                  />
+                  <Legend verticalAlign="top" wrapperStyle={{ paddingBottom: '20px' }} />
+                  
+                  <Line 
+                    type="monotone" 
+                    name="Curva Teórica (Restantes)" 
+                    dataKey="teorico" 
+                    stroke="#94a3b8" 
+                    strokeWidth={2} 
+                    strokeDasharray="5 5" 
+                    dot={false} 
+                    isAnimationActive={false}
+                  />
+                  <Line 
+                    type="monotone" 
+                    name="Dados Exp. (Restantes)" 
+                    dataKey="experimental" 
+                    stroke={corPrincipal} 
+                    strokeWidth={3} 
+                    activeDot={{ r: 6 }} 
+                    connectNulls 
+                  />
+
+                  <Line 
+                    type="monotone" 
+                    name="Curva Teórica (Decaídos)" 
+                    dataKey="teoricoDecaido" 
+                    stroke="#cbd5e1" 
+                    strokeWidth={2} 
+                    strokeDasharray="5 5" 
+                    dot={false} 
+                    isAnimationActive={false}
+                  />
+                  <Line 
+                    type="monotone" 
+                    name="Dados Exp. (Decaídos)" 
+                    dataKey="experimentalDecaido" 
+                    stroke={corComplementar} 
+                    strokeWidth={3} 
+                    activeDot={{ r: 6 }} 
+                    connectNulls 
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
           </div>
 
-          <div className="w-full lg:w-2/5 xl:w-1/3 bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
-            <div className="max-h-[450px] overflow-y-auto">
+          {/* Tabela Alta ao lado (Preenchendo a altura vertical combinada dos Cálculos e Gráfico) */}
+          <div className="w-full lg:w-2/5 xl:w-1/3 bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden flex flex-col h-full">
+            <div className="flex-1 max-h-[725px] overflow-y-auto">
               <table className="w-full text-sm text-left text-slate-600">
                 <thead className="text-xs text-white uppercase sticky top-0 z-10 shadow-sm" style={{ backgroundColor: corPrincipal }}>
                   <tr>
                     <th scope="col" className="px-3 py-3 text-center">Rodada</th>
                     <th scope="col" className="px-3 py-3 text-center">Quant. Exp.</th>
-                    {/* Nova coluna de Equação Teórica */}
                     <th scope="col" className="px-3 py-3 text-center">Valor Teórico</th>
                   </tr>
                 </thead>
@@ -228,7 +260,6 @@ const DadosRadioativosTab = ({ theme, corPrincipal, setCorPrincipal }) => {
                           placeholder="-"
                         />
                       </td>
-                      {/* Célula populada com o valor da equação teórica */}
                       <td className="px-3 py-2 text-center font-medium text-slate-500">
                         {String(linha.teorico).replace('.', ',')}
                       </td>
@@ -238,7 +269,7 @@ const DadosRadioativosTab = ({ theme, corPrincipal, setCorPrincipal }) => {
               </table>
             </div>
             <div className="p-3 bg-slate-50 text-xs text-slate-500 text-center border-t border-slate-200">
-              Digite seus resultados para traçar o gráfico.
+              Digite seus resultados experimentais para atualizar o gráfico interativo.
             </div>
           </div>
 
