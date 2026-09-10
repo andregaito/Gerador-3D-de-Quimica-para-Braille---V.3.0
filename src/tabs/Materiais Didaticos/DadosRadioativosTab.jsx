@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import ColorTester from '../../components/common/ColorTester';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Label } from 'recharts';
 
 const DadosRadioativosTab = ({ theme, corPrincipal, setCorPrincipal }) => {
   const [quantidadeInicial, setQuantidadeInicial] = useState(() => {
@@ -56,10 +56,9 @@ const DadosRadioativosTab = ({ theme, corPrincipal, setCorPrincipal }) => {
     }
   };
 
-  // Função para simular a rolagem de dados baseada nas faces radioativas selecionadas
   const handleJogarDados = () => {
     const indexVazio = dadosExperimentais.findIndex((d, idx) => idx > 0 && d.experimental === '');
-    if (indexVazio === -1) return; // Todas as rodadas preenchidas
+    if (indexVazio === -1) return;
 
     const qtdAnterior = Number(dadosExperimentais[indexVazio - 1].experimental);
     if (isNaN(qtdAnterior) || qtdAnterior <= 0) return;
@@ -67,10 +66,9 @@ const DadosRadioativosTab = ({ theme, corPrincipal, setCorPrincipal }) => {
     const p = facesRadioativas / 6;
     let restantes = 0;
     
-    // Simula cada dado restante rolando individualmente
     for (let i = 0; i < qtdAnterior; i++) {
       if (Math.random() >= p) {
-        restantes++; // Sobreviveu (não caiu na face radioativa)
+        restantes++;
       }
     }
 
@@ -79,7 +77,6 @@ const DadosRadioativosTab = ({ theme, corPrincipal, setCorPrincipal }) => {
     setDadosExperimentais(novosDados);
   };
 
-  // Função para reiniciar a simulação experimental
   const handleReiniciarSimulacao = () => {
     const novosDados = Array.from({ length: 22 }, (_, i) => ({
       rodada: i,
@@ -131,6 +128,32 @@ const DadosRadioativosTab = ({ theme, corPrincipal, setCorPrincipal }) => {
   const proximoIndiceVazio = dadosExperimentais.findIndex((d, idx) => idx > 0 && d.experimental === '');
   const simulacaoConcluída = proximoIndiceVazio === -1 || (ultimaRodadaPreenchida > 0 && dadosGrafico[ultimaRodadaPreenchida].experimental === 0);
 
+  // Cálculo dinâmico do R² quando a simulação for concluída (chegar a 0 ou esgotar as rodadas)
+  let r2ValorCalculado = null;
+  if (simulacaoConcluída && ultimaRodadaPreenchida > 0) {
+    const pontosValidos = dadosFiltradosGrafico.filter(d => d.experimental !== '');
+    const n = pontosValidos.length;
+    if (n > 1) {
+      const somaY = pontosValidos.reduce((acc, curr) => acc + curr.experimental, 0);
+      const mediaY = somaY / n;
+
+      let sqRes = 0;
+      let sqTot = 0;
+
+      pontosValidos.forEach(curr => {
+        sqRes += Math.pow(curr.experimental - curr.teorico, 2);
+        sqTot += Math.pow(curr.experimental - mediaY, 2);
+      });
+
+      if (sqTot > 0) {
+        const r2 = 1 - (sqRes / sqTot);
+        r2ValorCalculado = r2 >= 0 ? r2.toFixed(3).replace('.', ',') : '0,000';
+      } else {
+        r2ValorCalculado = '1,000';
+      }
+    }
+  }
+
   return (
     <div id="painel-dados-radioativos" role="tabpanel" aria-label="Dados Radioativos" className="relative p-8 sm:p-12 rounded-xl shadow-sm transition-colors duration-500 text-slate-700 fade-in space-y-8 text-left" style={{ backgroundColor: theme.fundoCaixa, border: `2px solid ${theme.bordaGeral}` }}>
       
@@ -163,13 +186,12 @@ const DadosRadioativosTab = ({ theme, corPrincipal, setCorPrincipal }) => {
       <div className="space-y-4 mb-8">
         <h3 className="text-xl font-bold text-slate-800">Análise Gráfica e Meia-Vida</h3>
         <p className="leading-relaxed text-justify">
-          Com os resultados anotados após cada lançamento, o estudante constrói um gráfico relacionando o número de rodadas com os dados restantes para encontrar a meia-vida do conjunto. Por fim, é possível comparar a curva de decaimento experimental com a equação teórica — como {"N(t) = " + quantidadeInicial + "e^{-" + lambdaFormatado + "t}"} para o cenário escolhido — permitindo avaliar a precisão matemática do experimento.
+          Com os resultados anotados após cada lançamento, o estudante constrói um gráfico relacionando o número de rodadas com os dados restantes para encontrar a meia-vida do conjunto. Ao término da simulação, o coeficiente de determinação (R²) é exibido para avaliar o nível de idealidade e aderência entre a curva experimental e o modelo teórico.
         </p>
       </div>
 
       <div className="pt-6 border-t border-slate-200">
         
-        {/* Controles da Simulação e Botão Jogar Dados */}
         <div className="flex flex-col lg:flex-row items-center justify-between mb-8 bg-slate-50 p-5 rounded-lg border border-slate-200 shadow-sm gap-6">
           <h3 className="text-2xl font-bold text-slate-800">Configurações da Simulação</h3>
           <div className="flex flex-wrap items-center gap-4">
@@ -255,7 +277,7 @@ const DadosRadioativosTab = ({ theme, corPrincipal, setCorPrincipal }) => {
               </div>
             </div>
 
-            <div className="h-[450px] bg-white p-4 rounded-lg shadow-inner border border-slate-200">
+            <div className="h-[450px] bg-white p-4 rounded-lg shadow-inner border border-slate-200 relative">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={dadosFiltradosGrafico} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
@@ -306,6 +328,14 @@ const DadosRadioativosTab = ({ theme, corPrincipal, setCorPrincipal }) => {
                   />
                 </LineChart>
               </ResponsiveContainer>
+
+              {/* Indicador de R² exibido no canto superior esquerdo ao finalizar a simulação */}
+              {r2ValorCalculado && (
+                <div className="absolute top-16 left-14 bg-slate-900/85 backdrop-blur-sm text-white px-3 py-1.5 rounded-md shadow-md text-xs sm:text-sm font-bold border border-slate-700 pointer-events-none flex items-center gap-1.5 z-10">
+                  <span className="text-slate-400 font-normal">Idealidade:</span>
+                  <span className="text-emerald-400">R² = {r2ValorCalculado}</span>
+                </div>
+              )}
             </div>
           </div>
 
