@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import ColorTester from '../../components/common/ColorTester';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Label } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 const DadosRadioativosTab = ({ theme, corPrincipal, setCorPrincipal }) => {
   const [quantidadeInicial, setQuantidadeInicial] = useState(() => {
@@ -128,7 +128,6 @@ const DadosRadioativosTab = ({ theme, corPrincipal, setCorPrincipal }) => {
   const proximoIndiceVazio = dadosExperimentais.findIndex((d, idx) => idx > 0 && d.experimental === '');
   const simulacaoConcluída = proximoIndiceVazio === -1 || (ultimaRodadaPreenchida > 0 && dadosGrafico[ultimaRodadaPreenchida].experimental === 0);
 
-  // Cálculo dinâmico do R² quando a simulação for concluída (chegar a 0 ou esgotar as rodadas)
   let r2ValorCalculado = null;
   if (simulacaoConcluída && ultimaRodadaPreenchida > 0) {
     const pontosValidos = dadosFiltradosGrafico.filter(d => d.experimental !== '');
@@ -329,11 +328,16 @@ const DadosRadioativosTab = ({ theme, corPrincipal, setCorPrincipal }) => {
                 </LineChart>
               </ResponsiveContainer>
 
-              {/* Indicador de R² exibido no canto superior esquerdo ao finalizar a simulação */}
+              {/* Indicador de R² centralizado no topo dentro da área do gráfico com a cor primária selecionada */}
               {r2ValorCalculado && (
-                <div className="absolute top-16 left-14 bg-slate-900/85 backdrop-blur-sm text-white px-3 py-1.5 rounded-md shadow-md text-xs sm:text-sm font-bold border border-slate-700 pointer-events-none flex items-center gap-1.5 z-10">
-                  <span className="text-slate-400 font-normal">Idealidade:</span>
-                  <span className="text-emerald-400">R² = {r2ValorCalculado}</span>
+                <div 
+                  className="absolute left-1/2 -translate-x-1/2 top-[76px] bg-white/90 backdrop-blur-sm px-3.5 py-1 rounded-full shadow-sm text-xs sm:text-sm font-bold border pointer-events-none flex items-center gap-1 z-10 transition-colors duration-300"
+                  style={{ 
+                    borderColor: corPrincipal,
+                    color: corPrincipal 
+                  }}
+                >
+                  <span>Idealidade R² = {r2ValorCalculado}</span>
                 </div>
               )}
             </div>
