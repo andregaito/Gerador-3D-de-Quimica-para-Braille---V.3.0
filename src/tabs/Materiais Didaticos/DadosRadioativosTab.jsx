@@ -1,8 +1,19 @@
 import React, { useState, useEffect } from 'react';
+import { track } from '@vercel/analytics'; // 1. Importação da função track do Vercel Analytics
 import ColorTester from '../../components/common/ColorTester';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 const DadosRadioativosTab = ({ theme, corPrincipal, setCorPrincipal }) => {
+  // ==========================================
+  // ADIÇÃO DE TRIGGER EVENTO DE VISUALIZAÇÃO DA ABA
+  // ==========================================
+  useEffect(() => {
+    // Dispara o evento 'Visualizou Aba' assim que este componente é renderizado
+    track('Visualizou Aba', {
+      aba: 'Dados Radioativos'
+    });
+  }, []); 
+
   const [quantidadeInicial, setQuantidadeInicial] = useState(() => {
     const salvo = sessionStorage.getItem('dados_rad_qtd_inicial');
     return salvo !== null ? Number(salvo) : 42;
@@ -57,6 +68,12 @@ const DadosRadioativosTab = ({ theme, corPrincipal, setCorPrincipal }) => {
   };
 
   const handleJogarDados = () => {
+    // 2. Evento opcional para rastrear o engajamento com a ferramenta
+    track('Clicou Jogar Dados', {
+      faces_radioativas: facesRadioativas,
+      dados_iniciais: quantidadeInicial
+    });
+
     const indexVazio = dadosExperimentais.findIndex((d, idx) => idx > 0 && d.experimental === '');
     if (indexVazio === -1) return;
 
