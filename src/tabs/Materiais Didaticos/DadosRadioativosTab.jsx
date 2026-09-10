@@ -328,16 +328,14 @@ const DadosRadioativosTab = ({ theme, corPrincipal, setCorPrincipal }) => {
                 </LineChart>
               </ResponsiveContainer>
 
-              {/* Indicador de R² centralizado no topo dentro da área do gráfico com a cor primária selecionada */}
+              {/* Indicador de R² centralizado no topo interno da área plotada e com a cor principal configurada */}
               {r2ValorCalculado && (
                 <div 
-                  className="absolute left-1/2 -translate-x-1/2 top-[76px] bg-white/90 backdrop-blur-sm px-3.5 py-1 rounded-full shadow-sm text-xs sm:text-sm font-bold border pointer-events-none flex items-center gap-1 z-10 transition-colors duration-300"
-                  style={{ 
-                    borderColor: corPrincipal,
-                    color: corPrincipal 
-                  }}
+                  className="absolute top-[68px] left-1/2 -translate-x-1/2 bg-slate-900/90 backdrop-blur-sm text-white px-3.5 py-1.5 rounded-md shadow-md text-xs sm:text-sm font-bold border pointer-events-none flex items-center gap-1.5 z-10"
+                  style={{ borderColor: corPrincipal }}
                 >
-                  <span>Idealidade R² = {r2ValorCalculado}</span>
+                  <span className="text-slate-200">Idealidade R² =</span>
+                  <span style={{ color: corPrincipal }}>{r2ValorCalculado}</span>
                 </div>
               )}
             </div>
