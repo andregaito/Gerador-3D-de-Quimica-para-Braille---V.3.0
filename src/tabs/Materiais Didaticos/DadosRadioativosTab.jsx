@@ -185,7 +185,7 @@ const DadosRadioativosTab = ({ theme, corPrincipal, setCorPrincipal }) => {
       <div className="space-y-4 mb-8">
         <h3 className="text-xl font-bold text-slate-800">Análise Gráfica e Meia-Vida</h3>
         <p className="leading-relaxed text-justify">
-          Com os resultados anotados após cada lançamento, o estudante constrói um gráfico relacionando o número de rodadas com os dados restantes para encontrar a meia-vida do conjunto. Ao término da simulação, o coeficiente de determinação (R²) é exibido para avaliar o nível de idealidade e aderência entre a curva experimental e o modelo teórico.
+          Com os resultados anotados após cada lançamento, o estudante constrói um gráfico relacionando o número de rodadas com os dados restantes para encontrar a meia-vida do conjunto. Ao final do jogo, é possível comparar a curva de decaimento experimental com a equação teórica, como: {"N(t) = " + quantidadeInicial + "e^{-" + lambdaFormatado + "t}"} para o cenário escolhido, permitindo assim avaliar a precisão matemática e idealidade (R²) do experimento.
         </p>
       </div>
 
