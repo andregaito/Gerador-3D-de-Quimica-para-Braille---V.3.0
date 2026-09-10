@@ -5,7 +5,7 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsi
 const DadosRadioativosTab = ({ theme, corPrincipal, setCorPrincipal }) => {
   const [quantidadeInicial, setQuantidadeInicial] = useState(() => {
     const salvo = sessionStorage.getItem('dados_rad_qtd_inicial');
-    return salvo !== null ? Number(salvo) : 35;
+    return salvo !== null ? Number(salvo) : 42;
   });
 
   const [facesRadioativas, setFacesRadioativas] = useState(() => {
@@ -22,9 +22,9 @@ const DadosRadioativosTab = ({ theme, corPrincipal, setCorPrincipal }) => {
         // Fallback caso haja erro de parsing
       }
     }
-    return Array.from({ length: 22 }, (_, i) => ({
+    return Array.from({ length: 30 }, (_, i) => ({
       rodada: i,
-      experimental: i === 0 ? 35 : '', 
+      experimental: i === 0 ? 42 : '', 
     }));
   });
 
@@ -297,16 +297,7 @@ const DadosRadioativosTab = ({ theme, corPrincipal, setCorPrincipal }) => {
                   />
                   <Legend verticalAlign="top" wrapperStyle={{ paddingBottom: '20px' }} />
                   
-                  <Line 
-                    type="monotone" 
-                    name={`Eq. Teórica Meia Vida: N(t) = ${quantidadeInicial}e^{-${lambdaFormatado}t}`}
-                    dataKey="teorico" 
-                    stroke="#94a3b8" 
-                    strokeWidth={2} 
-                    strokeDasharray="5 5" 
-                    dot={false} 
-                    isAnimationActive={false}
-                  />
+                  {/* Ordem das linhas alterada conforme solicitado */}
                   <Line 
                     type="monotone" 
                     name="Quant. Dados" 
@@ -325,17 +316,29 @@ const DadosRadioativosTab = ({ theme, corPrincipal, setCorPrincipal }) => {
                     activeDot={{ r: 6 }} 
                     connectNulls 
                   />
+                  <Line 
+                    type="monotone" 
+                    name={`Eq. Teórica Meia Vida: N(t) = ${quantidadeInicial}e^{-${lambdaFormatado}t}`}
+                    dataKey="teorico" 
+                    stroke="#94a3b8" 
+                    strokeWidth={2} 
+                    strokeDasharray="5 5" 
+                    dot={false} 
+                    isAnimationActive={false}
+                  />
                 </LineChart>
               </ResponsiveContainer>
 
-              {/* Indicador de R² centralizado no topo interno da área plotada e com a cor principal configurada */}
+              {/* Indicador de R² movido levemente para baixo (top-[100px]) para não conflitar com a legenda */}
               {r2ValorCalculado && (
                 <div 
-                  className="absolute top-[68px] left-1/2 -translate-x-1/2 bg-slate-900/90 backdrop-blur-sm text-white px-3.5 py-1.5 rounded-md shadow-md text-xs sm:text-sm font-bold border pointer-events-none flex items-center gap-1.5 z-10"
-                  style={{ borderColor: corPrincipal }}
+                  className="absolute left-1/2 -translate-x-1/2 top-[100px] bg-white/90 backdrop-blur-sm px-3.5 py-1 rounded-full shadow-sm text-xs sm:text-sm font-bold border pointer-events-none flex items-center gap-1 z-10 transition-colors duration-300"
+                  style={{ 
+                    borderColor: corPrincipal,
+                    color: corPrincipal 
+                  }}
                 >
-                  <span className="text-slate-200">Idealidade R² =</span>
-                  <span style={{ color: corPrincipal }}>{r2ValorCalculado}</span>
+                  <span>Idealidade R² = {r2ValorCalculado}</span>
                 </div>
               )}
             </div>
