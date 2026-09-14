@@ -34,7 +34,7 @@ import CarimbosAtomicosTab from './tabs/Materiais Didaticos/CarimbosAtomicosTab'
 import SpinnerElementarTab from './tabs/Materiais Didaticos/SpinnerElementarTab';
 
 // === IMPORTAÇÕES DO QUIMICARDS (GERAL E CARTAS INDIVIDUAIS) ===
-import QuimiCardsTab from './tabs/QuimiCards'; // Aba geral com instrucoes do jogo
+import QuimiCardsTab from './tabs/QuimiCards/QuimiCardsTab'; // Aba geral com instrucoes do jogo
 import EscudoDeChumboTab from './tabs/QuimiCards/escudo-de-chumbo'; // Sub-aba da carta de habilidade
 import HibridizacaoTab from './tabs/QuimiCards/hibridizacao'; // Sub-aba da carta de habilidade
 import LigacaoCovalenteTab from './tabs/QuimiCards/ligacao-covalente'; // Sub-aba da carta de habilidade
