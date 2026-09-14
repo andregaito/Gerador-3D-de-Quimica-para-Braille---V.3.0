@@ -5,8 +5,10 @@
     
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" /> 
     
-    <!-- Trava a visualizaçã nos celulares no modo Desktop por padrão (Estava gerando erros na versão celular vs notebook) -->
-    <meta name="viewport" content="width=1024, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />    
+    <!-- Tive que ajustar: width=device-width é obrigatório pra que o WebAR e a câmera funcionarem bem em celulares. 
+         Se o restante do site precisar (espero que não) de layout fixo em desktop, é possível tratar isso via CSS nas páginas específicas, 
+         mas a realidade aumentada (AR) exige uma largura flexível para renderizar o canvas, infelizmente... -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />    
     <title>Química ao Alcance das Mãos</title>
 
     <meta property="og:type" content="website" />
@@ -22,6 +24,9 @@
     <meta name="twitter:description" content="Gerador 3D de Química para Braille. Converte fórmulas em modelos STL para impressão 3D e leitura tátil." />
     <meta name="twitter:image" content="https://gerador-3d-de-quimica-para-braille.vercel.app/logo-preview.png" />
     
+    <!-- CDNs obrigatórias do A-Frame e do MindAR para rastreamento de imagem via navegador -->
+    <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
   </head>
   <body>
     <div id="root"></div>
