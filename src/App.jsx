@@ -36,9 +36,10 @@ import SpinnerElementarTab from './tabs/Materiais Didaticos/SpinnerElementarTab'
 // === IMPORTAÇÕES DO QUIMICARDS (GERAL E CARTAS INDIVIDUAIS) ===
 import QuimiCardsTab from './tabs/QuimiCards'; // Aba geral com instrucoes do jogo
 import EscudoDeChumboTab from './tabs/QuimiCards/escudo-de-chumbo'; // Sub-aba da carta de habilidade
-import EscudoDeChumboTab from './tabs/QuimiCards/hibridizacao'; // Sub-aba da carta de habilidade
-import EscudoDeChumboTab from './tabs/QuimiCards/ligacao-covalente'; // Sub-aba da carta de habilidade
-import EscudoDeChumboTab from './tabs/QuimiCards/mudanca-ph'; // Sub-aba da carta de habilidade
+import HibridizacaoTab from './tabs/QuimiCards/hibridizacao'; // Sub-aba da carta de habilidade
+import LigacaoCovalenteTab from './tabs/QuimiCards/ligacao-covalente'; // Sub-aba da carta de habilidade
+import MudancaPhTab from './tabs/QuimiCards/mudanca-ph'; // Sub-aba da carta de habilidade
+
 
 
 // ============================================================================
@@ -97,9 +98,9 @@ export default function App() {
             {/* === ROTAS DO QUIMICARDS E SUAS CARTAS === */}
             <Route path="/quimicards" element={<QuimiCardsTab theme={theme} corPrincipal={corPrincipal} setCorPrincipal={setCorPrincipal} />} />
             <Route path="/quimicards/escudo-de-chumbo" element={<EscudoDeChumboTab theme={theme} corPrincipal={corPrincipal} setCorPrincipal={setCorPrincipal} />} />
-            <Route path="/quimicards/hibridizacao" element={<EscudoDeChumboTab theme={theme} corPrincipal={corPrincipal} setCorPrincipal={setCorPrincipal} />} />
-            <Route path="/quimicards/ligacao-covalente" element={<EscudoDeChumboTab theme={theme} corPrincipal={corPrincipal} setCorPrincipal={setCorPrincipal} />} />
-            <Route path="/quimicards/mudanca-ph" element={<EscudoDeChumboTab theme={theme} corPrincipal={corPrincipal} setCorPrincipal={setCorPrincipal} />} />
+            <Route path="/quimicards/hibridizacao" element={<HibridizacaoTab theme={theme} corPrincipal={corPrincipal} setCorPrincipal={setCorPrincipal} />} />
+            <Route path="/quimicards/ligacao-covalente" element={<LigacaoCovalenteTab theme={theme} corPrincipal={corPrincipal} setCorPrincipal={setCorPrincipal} />} />
+            <Route path="/quimicards/mudanca-ph" element={<MudancaPhTab theme={theme} corPrincipal={corPrincipal} setCorPrincipal={setCorPrincipal} />} />
             
             {/* === ROTAS DAS ABAS PRINCIPAIS DO SITE === */}
             <Route path="/sobre" element={<SobreProjetoTab theme={theme} corPrincipal={corPrincipal} setCorPrincipal={setCorPrincipal} />} />
