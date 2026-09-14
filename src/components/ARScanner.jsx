@@ -21,7 +21,6 @@ const ARScanner = ({ aoFechar }) => {
 
     cenaEl.addEventListener('arReady', handleArReady);
 
-    // Seleciona os alvos reconhecidos pelo A-Frame
     const targets = cenaEl.querySelectorAll('[mindar-image-target]');
     
     targets.forEach((target, index) => {
@@ -36,17 +35,33 @@ const ARScanner = ({ aoFechar }) => {
       });
     });
 
+    // Função de limpeza executada ao fechar o componente
     return () => {
       cenaEl.removeEventListener('arReady', handleArReady);
+
+      // 1. Interrompe o sistema de AR do MindAR
+      if (cenaEl.systems && cenaEl.systems['mindar-image-system']) {
+        cenaEl.systems['mindar-image-system'].stop();
+      }
+
+      // 2. Encerra a transmissão do stream da câmera no navegador
+      const videoEl = document.querySelector('video');
+      if (videoEl && videoEl.srcObject) {
+        const tracks = videoEl.srcObject.getTracks();
+        tracks.forEach((track) => track.stop());
+        videoEl.remove();
+      }
     };
   }, []);
 
   return (
     <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: 9999, overflow: 'hidden' }}>
       
-      {/* Botão de Fechar/Voltar para a aba da carta */}
+      {/* Botão de Fechar com atributos de acessibilidade */}
       <button 
+        type="button"
         onClick={aoFechar}
+        aria-label="Fechar Câmera de Realidade Aumentada"
         style={{
           position: 'absolute',
           top: '20px',
@@ -76,14 +91,14 @@ const ARScanner = ({ aoFechar }) => {
       >
         <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
-        {/* Renderiza dinamicamente as entidades rastreadas */}
-        {Object.keys(modelosCartas.map) && Object.keys(modelosCartas).map((key) => {
+        {/* Correção no mapeamento das chaves do objeto */}
+        {Object.keys(modelosCartas).map((key) => {
           const index = parseInt(key, 10);
           const estaVisivel = alvoAtivo === index;
 
           return (
             <a-entity key={index} mindar-image-target={`targetIndex: ${index}`}>
-              {/* Lazy Loading: o modelo .glb só é injetado na RAM se a carta estiver no enquadramento */}
+              {/* Renderização condicional para carregamento sob demanda do modelo */}
               {estaVisivel && (
                 <a-gltf-model
                   src={modelosCartas[index]}
