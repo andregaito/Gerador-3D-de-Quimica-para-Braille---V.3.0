@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import ARScanner from '../../../components/ARScanner'; // ajuste o caminho relativo conforme sua árvore
-
+import ARScanner from '../../components/ARScanner';
 const LigacaoCovalentePage = () => {
   const [cameraAtiva, setCameraAtiva] = useState(false);
 
