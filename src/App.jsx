@@ -33,6 +33,14 @@ import GeometriaMolecularTab from './tabs/Materiais Didaticos/GeometriaMolecular
 import CarimbosAtomicosTab from './tabs/Materiais Didaticos/CarimbosAtomicosTab';
 import SpinnerElementarTab from './tabs/Materiais Didaticos/SpinnerElementarTab';
 
+// === IMPORTAÇÕES DO QUIMICARDS (GERAL E CARTAS INDIVIDUAIS) ===
+import QuimiCardsTab from './tabs/QuimiCards'; // Aba geral com instrucoes do jogo
+import EscudoDeChumboTab from './tabs/QuimiCards/escudo-de-chumbo'; // Sub-aba da carta de habilidade
+import EscudoDeChumboTab from './tabs/QuimiCards/hibridizacao'; // Sub-aba da carta de habilidade
+import EscudoDeChumboTab from './tabs/QuimiCards/ligacao-covalente'; // Sub-aba da carta de habilidade
+import EscudoDeChumboTab from './tabs/QuimiCards/mudanca-ph'; // Sub-aba da carta de habilidade
+
+
 
 
 // ============================================================================
