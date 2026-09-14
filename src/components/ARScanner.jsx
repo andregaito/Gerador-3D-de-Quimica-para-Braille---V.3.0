@@ -1,62 +1,74 @@
 import React, { useEffect, useState, useRef } from 'react';
 
-// Mapeia o índice do arquivo .mind para o caminho do respectivo .glb na pasta /public
-const modelosMapeados = {
-  0: '/modelos/sodio.glb',
-  1: '/modelos/oxigenio.glb',
-  // Continue o mapeamento conforme o número de cartas geradas no compilador MindAR
+// Dicionário mapeando o índice numérico do MindAR para o arquivo .glb correspondente
+const modelosCartas = {
+  0: '/Modelos-3D-Cartas/ligacao-covalente.glb',
+  1: '/Modelos-3D-Cartas/escudo-de-chumbo.glb',
+  // Adicione novas cartas aqui seguindo a ordem em que foram compiladas no baralho.mind
 };
 
-const ARScanner = () => {
-  // Guarda o índice da carta atualmente visível na câmera
+const ARScanner = ({ aoFechar }) => {
   const [alvoAtivo, setAlvoAtivo] = useState(null);
   const cenaRef = useRef(null);
 
   useEffect(() => {
-    const elementoCena = cenaRef.current;
-    if (!elementoCena) return;
+    const cenaEl = cenaRef.current;
+    if (!cenaEl) return;
 
-    // Seleciona todas as entidades que funcionam como alvos no A-Frame
-    const alvos = elementoCena.querySelectorAll('[mindar-image-target]');
+    const handleArReady = () => {
+      console.log("MindAR pronto e câmera ativa.");
+    };
 
-    alvos.forEach((alvo, index) => {
-      // Evento disparado pelo MindAR quando a carta entra no campo de visão
-      alvo.addEventListener('targetFound', () => {
-        console.log(`Carta índice ${index} encontrada.`);
+    cenaEl.addEventListener('arReady', handleArReady);
+
+    // Seleciona os alvos reconhecidos pelo A-Frame
+    const targets = cenaEl.querySelectorAll('[mindar-image-target]');
+    
+    targets.forEach((target, index) => {
+      target.addEventListener('targetFound', () => {
+        console.log(`Carta índice ${index} detectada!`);
         setAlvoAtivo(index);
       });
 
-      // Evento disparado quando a carta sai do campo de visão
-      alvo.addEventListener('targetLost', () => {
+      target.addEventListener('targetLost', () => {
         console.log(`Carta índice ${index} perdida.`);
-        setAlvoAtivo((estadoAnterior) => (estadoAnterior === index ? null : estadoAnterior));
+        setAlvoAtivo((prev) => (prev === index ? null : prev));
       });
     });
 
-    // Cleanup: remove os listeners quando o componente for desmontado
     return () => {
-      alvos.forEach((alvo) => {
-        alvo.removeEventListener('targetFound');
-        alvo.removeEventListener('targetLost');
-      });
+      cenaEl.removeEventListener('arReady', handleArReady);
     };
   }, []);
 
   return (
-    <div style={{ width: '100vw', height: '100vh', overflow: 'hidden', position: 'relative' }}>
+    <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: 9999, overflow: 'hidden' }}>
       
-      {/* Botão de retorno, útil se acessado via tag NFC */}
+      {/* Botão de Fechar/Voltar para a aba da carta */}
       <button 
-        onClick={() => window.history.back()} 
-        style={{ position: 'absolute', top: '20px', left: '20px', zIndex: 999 }}
+        onClick={aoFechar}
+        style={{
+          position: 'absolute',
+          top: '20px',
+          left: '20px',
+          zIndex: 10000,
+          background: '#ef4444',
+          color: 'white',
+          border: 'none',
+          padding: '10px 18px',
+          borderRadius: '8px',
+          fontWeight: 'bold',
+          cursor: 'pointer',
+          boxShadow: '0 4px 6px rgba(0,0,0,0.2)'
+        }}
       >
-        Voltar para a Carta
+        ✕ Fechar Câmera AR
       </button>
 
-      {/* Configuração da Cena do MindAR com A-Frame */}
+      {/* Cena principal do A-Frame integrada ao MindAR */}
       <a-scene
         ref={cenaRef}
-        mindar-image="imageTargetSrc: /marcadores/baralho.mind; autoStart: true; uiLoading: no; uiError: no;"
+        mindar-image="imageTargetSrc: /marcadores/baralho.mind; autoStart: true; uiLoading: yes; uiError: yes;"
         color-space="sRGB"
         renderer="colorManagement: true, physicallyCorrectLights"
         vr-mode-ui="enabled: false"
@@ -64,27 +76,23 @@ const ARScanner = () => {
       >
         <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
-        {/* Mapeia e renderiza as entidades de alvo (targets) */}
-        {Object.keys(modelosMapeados).map((chave) => {
-          const index = parseInt(chave, 10);
-          const estaAtivo = alvoAtivo === index;
+        {/* Renderiza dinamicamente as entidades rastreadas */}
+        {Object.keys(modelosCartas.map) && Object.keys(modelosCartas).map((key) => {
+          const index = parseInt(key, 10);
+          const estaVisivel = alvoAtivo === index;
 
           return (
             <a-entity key={index} mindar-image-target={`targetIndex: ${index}`}>
-              
-              {/* Renderização Condicional: O <a-gltf-model> só é inserido na DOM se 'estaAtivo' for true.
-                  Isso evita sobrecarga de memória carregando múltiplos arquivos .glb simultaneamente. */}
-              {estaAtivo && (
+              {/* Lazy Loading: o modelo .glb só é injetado na RAM se a carta estiver no enquadramento */}
+              {estaVisivel && (
                 <a-gltf-model
-                  src={modelosMapeados[index]}
-                  position="0 0 0.1" // Eleva levemente o modelo acima da carta
-                  scale="0.5 0.5 0.5" // Ajuste conforme a exportação do modelo
+                  src={modelosCartas[index]}
+                  position="0 0 0"
+                  scale="0.6 0.6 0.6"
                   rotation="0 0 0"
-                  // Adiciona uma animação de rotação básica nativa do A-Frame
-                  animation="property: rotation; to: 0 360 0; loop: true; dur: 5000"
+                  animation="property: rotation; to: 0 360 0; loop: true; dur: 6000"
                 ></a-gltf-model>
               )}
-
             </a-entity>
           );
         })}
