@@ -1,32 +1,19 @@
 import React, { useState } from 'react';
-import ARScanner from '../../../components/ARScanner'; // ajuste o caminho relativo conforme sua árvore
+import ARScanner from '../../../components/ARScanner';
 
-const LigacaoCovalentePage = () => {
+const BlindagemDeChumboPage = () => {
   const [cameraAtiva, setCameraAtiva] = useState(false);
 
   return (
-    <div style={{ padding: '20px', maxWidth: '800px', margin: '0 auto' }}>
+    <div style={{ padding: '20px' }}>
       {cameraAtiva ? (
-        <ARScanner aoFechar={() => setCameraAtiva(false)} />
+        <ARScanner cartaId="blindagem-de-chumbo" aoFechar={() => setCameraAtiva(false)} />
       ) : (
         <div>
-          <h1>Carta de Habilidade: Ligação Covalente</h1>
-          <p>Princípio químico: Compartilhamento de pares de elétrons entre átomos...</p>
-          
-          <button 
-            onClick={() => setCameraAtiva(true)}
-            style={{
-              background: '#2563eb',
-              color: 'white',
-              padding: '12px 24px',
-              borderRadius: '8px',
-              border: 'none',
-              fontSize: '16px',
-              cursor: 'pointer',
-              marginTop: '20px'
-            }}
-          >
-            📱 Ativar Realidade Aumentada (AR)
+          <h1>Carta: Escudo de Blindagem de Chumbo</h1>
+          <p>Princípio químico: Alta densidade e atenuação de radiação ionizante...</p>
+          <button onClick={() => setCameraAtiva(true)}>
+            📱 Ativar Realidade Aumentada da Carta
           </button>
         </div>
       )}
@@ -34,4 +21,4 @@ const LigacaoCovalentePage = () => {
   );
 };
 
-export default LigacaoCovalentePage;
+export default BlindagemDeChumboPage;
