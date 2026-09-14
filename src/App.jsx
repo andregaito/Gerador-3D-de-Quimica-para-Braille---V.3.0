@@ -41,8 +41,6 @@ import EscudoDeChumboTab from './tabs/QuimiCards/ligacao-covalente'; // Sub-aba 
 import EscudoDeChumboTab from './tabs/QuimiCards/mudanca-ph'; // Sub-aba da carta de habilidade
 
 
-
-
 // ============================================================================
 // APP.JSX — Orquestrador principal do site
 //
@@ -64,6 +62,7 @@ import EscudoDeChumboTab from './tabs/QuimiCards/mudanca-ph'; // Sub-aba da cart
 // ============================================================================
 
 
+
 export default function App() {
   const [corPrincipal, setCorPrincipal] = useState('#511576');
   const theme = getTheme(corPrincipal);
@@ -77,7 +76,6 @@ export default function App() {
       <div className="flex flex-col min-h-screen font-sans text-slate-800 transition-colors duration-500" style={{ backgroundColor: theme.fundoPrincipal }}>
         <Header theme={theme} />
         
-        {/* O Navigation não recebe mais activeTab/setActiveTab, ele lerá a URL atual via React Router */}
         <Navigation theme={theme} />
 
         <main className="flex-grow p-4 sm:p-6 w-full max-w-5xl mx-auto">
@@ -86,7 +84,7 @@ export default function App() {
             <Route path="/" element={<Navigate to="/gerador" replace />} />
             <Route path="/gerador" element={<GeradorBrailleTab theme={theme} corPrincipal={corPrincipal} setCorPrincipal={setCorPrincipal} autoRotate={autoRotate} setAutoRotate={setAutoRotate} gerador={gerador} />} />
             <Route path="/ionicos" element={<BlocosIonicosTab theme={theme} corPrincipal={corPrincipal} setCorPrincipal={setCorPrincipal} autoRotate={autoRotate} setAutoRotate={setAutoRotate} ionico={ionico} />} />
-            
+
             {/* === ROTAS DO MATERIAIS DIDATICOS === */}
             <Route path="/dados-radioativos" element={<DadosRadioativosTab theme={theme} corPrincipal={corPrincipal} setCorPrincipal={setCorPrincipal} />} />
             <Route path="/giroscopios" element={<GiroscopiosTab theme={theme} corPrincipal={corPrincipal} setCorPrincipal={setCorPrincipal} />} />
@@ -99,6 +97,9 @@ export default function App() {
             {/* === ROTAS DO QUIMICARDS E SUAS CARTAS === */}
             <Route path="/quimicards" element={<QuimiCardsTab theme={theme} corPrincipal={corPrincipal} setCorPrincipal={setCorPrincipal} />} />
             <Route path="/quimicards/escudo-de-chumbo" element={<EscudoDeChumboTab theme={theme} corPrincipal={corPrincipal} setCorPrincipal={setCorPrincipal} />} />
+            <Route path="/quimicards/hibridizacao" element={<EscudoDeChumboTab theme={theme} corPrincipal={corPrincipal} setCorPrincipal={setCorPrincipal} />} />
+            <Route path="/quimicards/ligacao-covalente" element={<EscudoDeChumboTab theme={theme} corPrincipal={corPrincipal} setCorPrincipal={setCorPrincipal} />} />
+            <Route path="/quimicards/mudanca-ph" element={<EscudoDeChumboTab theme={theme} corPrincipal={corPrincipal} setCorPrincipal={setCorPrincipal} />} />
             
             {/* === ROTAS DAS ABAS PRINCIPAIS DO SITE === */}
             <Route path="/sobre" element={<SobreProjetoTab theme={theme} corPrincipal={corPrincipal} setCorPrincipal={setCorPrincipal} />} />
@@ -114,7 +115,6 @@ export default function App() {
         </main>
 
         <Footer theme={theme} />
-        {/* === ADIÇÃO DO COMPONENTE ANALYTICS DO VERCEL === */}
         <Analytics />
         
       </div>
