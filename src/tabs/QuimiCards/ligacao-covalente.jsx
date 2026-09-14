@@ -15,30 +15,34 @@ const LigacaoCovalenteTab = ({ theme, corPrincipal, setCorPrincipal }) => {
       id="painel-ligacao-covalente"
       role="tabpanel"
       aria-label="Carta Ligação Covalente"
-      className="relative p-6 sm:p-10 rounded-xl shadow-sm transition-colors duration-500 text-slate-700 fade-in space-y-8 text-left max-w-4xl mx-auto"
+      // Classes do container baseadas exatamente no padrão de layout principal
+      className="relative p-8 sm:p-12 rounded-xl shadow-sm transition-colors duration-500 text-slate-700 fade-in space-y-8 text-left overflow-hidden"
       style={{ backgroundColor: theme.fundoCaixa, border: `2px solid ${theme.bordaGeral}` }}
     >
-      {/* Ícone do seletor de cores com posicionamento padronizado */}
-      <div className="absolute top-6 right-6 sm:top-8 sm:right-8 z-10">
-        <ColorTester corPrincipal={corPrincipal} setCorPrincipal={setCorPrincipal} />
-      </div>
-
-      {/* Banner da Carta (Cabeçalho Estilizado) */}
-      <div className="bg-[#c84327] rounded-2xl p-4 sm:p-6 text-white flex items-center gap-4 sm:gap-6 shadow-md border border-red-800/20 pr-16 sm:pr-36">
-        <div className="w-14 h-14 sm:w-20 sm:h-20 bg-white rounded-full flex items-center justify-center p-2 sm:p-3 shrink-0 shadow-inner">
-          <img
-            src={simboloAtaque}
-            alt="Símbolo de Carta de Ataque"
-            className="w-full h-full object-contain"
-          />
+      
+      {/* Faixa Vermelha - Margens negativas fazem o fundo tocar o topo e as laterais exatas do container */}
+      <div className="-mx-8 sm:-mx-12 -mt-8 sm:-mt-12 px-8 sm:px-12 pt-8 sm:pt-12 pb-6 bg-[#c84327] relative border-b border-[#a8321b]">
+        
+        {/* Ícone com posicionamento absoluto padronizado */}
+        <div className="absolute top-6 right-6 sm:top-8 sm:right-8 z-10">
+          <ColorTester corPrincipal={corPrincipal} setCorPrincipal={setCorPrincipal} />
         </div>
-        <div>
-          <h2 className="text-2xl sm:text-3xl font-black tracking-tight leading-tight">
-            Ligação Covalente
-          </h2>
-          <p className="text-base sm:text-xl font-medium text-amber-100">
-            Compartilhamento Forçado
-          </p>
+
+        {/* Margem de segurança de 140px idêntica ao SobreProjeto */}
+        <div className="pr-16 sm:pr-[140px] flex items-center gap-5 sm:gap-6">
+          <div className="w-14 h-14 sm:w-16 sm:h-16 bg-white rounded-full flex items-center justify-center p-2.5 shrink-0 shadow-sm">
+            <img
+              src={simboloAtaque}
+              alt="Símbolo de Carta de Ataque"
+              className="w-full h-full object-contain"
+            />
+          </div>
+          <div>
+            <h2 className="text-3xl font-extrabold text-white tracking-tight">Ligação Covalente</h2>
+            <p className="text-lg font-medium mt-2 text-white/95 text-justify">
+              Compartilhamento Forçado
+            </p>
+          </div>
         </div>
       </div>
 
@@ -85,7 +89,6 @@ const LigacaoCovalenteTab = ({ theme, corPrincipal, setCorPrincipal }) => {
 
             {/* Elétrons não compartilhados Átomo 1 (Amarelos) */}
             <circle cx="170" cy="30" r="6" fill="#eab308" />
-            <text x="170" y="22" textAnchor="middle" fontSize="10" fill="#64748b"></text>
             <circle cx="90" cy="110" r="6" fill="#eab308" />
             <circle cx="170" cy="190" r="6" fill="#eab308" />
             <circle cx="113" cy="53" r="6" fill="#eab308" />
