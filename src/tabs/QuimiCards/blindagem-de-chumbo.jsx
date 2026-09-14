@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import ARScanner from '../../../components/ARScanner';
-
+import ARScanner from '../../components/ARScanner';
 const BlindagemDeChumboPage = () => {
   const [cameraAtiva, setCameraAtiva] = useState(false);
 
