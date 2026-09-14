@@ -82,11 +82,12 @@ export default function App() {
 
         <main className="flex-grow p-4 sm:p-6 w-full max-w-5xl mx-auto">
           <Routes>
+            {/* === ROTAS DO MENU PRINCIPAL DO SITE === */}
             <Route path="/" element={<Navigate to="/gerador" replace />} />
-            
             <Route path="/gerador" element={<GeradorBrailleTab theme={theme} corPrincipal={corPrincipal} setCorPrincipal={setCorPrincipal} autoRotate={autoRotate} setAutoRotate={setAutoRotate} gerador={gerador} />} />
             <Route path="/ionicos" element={<BlocosIonicosTab theme={theme} corPrincipal={corPrincipal} setCorPrincipal={setCorPrincipal} autoRotate={autoRotate} setAutoRotate={setAutoRotate} ionico={ionico} />} />
             
+            {/* === ROTAS DO MATERIAIS DIDATICOS === */}
             <Route path="/dados-radioativos" element={<DadosRadioativosTab theme={theme} corPrincipal={corPrincipal} setCorPrincipal={setCorPrincipal} />} />
             <Route path="/giroscopios" element={<GiroscopiosTab theme={theme} corPrincipal={corPrincipal} setCorPrincipal={setCorPrincipal} />} />
             <Route path="/dados-ionicos" element={<DadosIonicosTab theme={theme} corPrincipal={corPrincipal} setCorPrincipal={setCorPrincipal} />} />
@@ -95,6 +96,11 @@ export default function App() {
             <Route path="/carimbos" element={<CarimbosAtomicosTab theme={theme} corPrincipal={corPrincipal} setCorPrincipal={setCorPrincipal} />} />
             <Route path="/spinner" element={<SpinnerElementarTab theme={theme} corPrincipal={corPrincipal} setCorPrincipal={setCorPrincipal} />} />
             
+            {/* === ROTAS DO QUIMICARDS E SUAS CARTAS === */}
+            <Route path="/quimicards" element={<QuimiCardsTab theme={theme} corPrincipal={corPrincipal} setCorPrincipal={setCorPrincipal} />} />
+            <Route path="/quimicards/escudo-de-chumbo" element={<EscudoDeChumboTab theme={theme} corPrincipal={corPrincipal} setCorPrincipal={setCorPrincipal} />} />
+            
+            {/* === ROTAS DAS ABAS PRINCIPAIS DO SITE === */}
             <Route path="/sobre" element={<SobreProjetoTab theme={theme} corPrincipal={corPrincipal} setCorPrincipal={setCorPrincipal} />} />
             <Route path="/instrucoes" element={<InstrucoesTab theme={theme} corPrincipal={corPrincipal} setCorPrincipal={setCorPrincipal} />} />
             <Route path="/saiba-mais" element={<SaibaMaisTab theme={theme} corPrincipal={corPrincipal} setCorPrincipal={setCorPrincipal} />} />
