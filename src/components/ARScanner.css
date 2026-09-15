@@ -1,0 +1,41 @@
+/* Oculta barras de rolagem globais durante a execução do A-Frame/MindAR em dispositivos móveis */
+body.ar-active {
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+}
+
+.ar-scanner-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 9999;
+  overflow: hidden;
+  background-color: #000; /* Fundo escuro antes da câmera iniciar */
+}
+
+.ar-close-button {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  z-index: 10000;
+  background-color: #ef4444;
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.ar-close-button:hover {
+  background-color: #dc2626;
+}
+
+.ar-close-button:active {
+  transform: scale(0.95);
+}
